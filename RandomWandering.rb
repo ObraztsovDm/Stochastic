@@ -109,8 +109,8 @@ class RandomWandering
   for i in probability_mas
     temp += i
 
-    if temp > 1
-      puts "Сумарна ймовірність має бути менша за 1. Почніть з початку."
+    if temp != 1
+      puts "Сумарна ймовірність має дорівнювати 1 і не перевищувати її. Почніть з початку."
       abort
     end
   end
@@ -140,20 +140,20 @@ class RandomWandering
 
     if obj.is_absorption
       absorption += 1
-      #puts "Стоп"
+      #puts "Поглинання"
     else
       if obj.x_loc == choose_n
-        #puts "Восток"
+        #puts "Схід"
         out_east += 1
       elsif obj.x_loc == 0
         out_west += 1
-        #puts "Запад"
+        #puts "Захід"
       elsif obj.y_loc == choose_m
         out_north += 1
-        #puts "Север"
+        #puts "Північ"
       elsif obj.y_loc == 0
         out_south += 1
-        #puts "Юг"
+        #puts "Південь"
       end
     end
   end
