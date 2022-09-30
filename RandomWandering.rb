@@ -104,15 +104,9 @@ class RandomWandering
     end
   end
 
-  temp = 0
-
-  for i in probability_mas
-    temp += i
-
-    if temp != 1
-      puts "Сумарна ймовірність має дорівнювати 1 і не перевищувати її. Почніть з початку."
-      abort
-    end
+  if probability_mas.sum != 1
+    puts "Сумарна ймовірність має дорівнювати 1 і не перевищувати її. Почніть з початку."
+    abort
   end
 
   def check_movement (probability_mas)
