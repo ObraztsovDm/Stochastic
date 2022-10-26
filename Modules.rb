@@ -54,22 +54,22 @@ module RectangleModule
     [sum_func_1, sum_func_2, sum_func_3]
   end
 
-  def mult_func_sum_by_gaps(down, up, rec_step, sum_func)
+  def calculate_rectangle(down, up, rec_step, sum_func)
     (up - down) * (sum_func / ((up - down) / rec_step))
   end
 
   def rectangle_method(down, up, a, u, k, rec_step)
     rectangle_array = rectangle_integration(down, up, a, u, k, rec_step)
-    rectangle_array.map { |sum_func| mult_func_sum_by_gaps(down, up, rec_step, sum_func) }.inject(:*)
+    rectangle_array.map { |sum_func| calculate_rectangle(down, up, rec_step, sum_func) }.inject(:*)
   end
 
   def runge_inaccuracy(down, up, a, u, k, rec_step)
     double_step = rec_step * 2
 
     rectangle_array_h = rectangle_integration(down, up, a, u, k, rec_step)
-                          .map { |sum_func| mult_func_sum_by_gaps(down, up, rec_step, sum_func) }
+                          .map { |sum_func| calculate_rectangle(down, up, rec_step, sum_func) }
     rectangle_array_2h = rectangle_integration(down, up, a, u, k, double_step)
-                           .map { |sum_func| mult_func_sum_by_gaps(down, up, double_step, sum_func) }
+                           .map { |sum_func| calculate_rectangle(down, up, double_step, sum_func) }
 
     (((0..2).map { |idx| rectangle_array_h[idx] - rectangle_array_2h[idx] }.sum) / 3).abs
   end
@@ -272,11 +272,11 @@ module MonteKarloHard
       max = min_max_func[1]
 
       if f_idx == 1
-        puts inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[0].to_f / num_calculations * (1 - temp_dispersion[0].to_f / num_calculations)) / num_calculations)
+        inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[0].to_f / num_calculations * (1 - temp_dispersion[0].to_f / num_calculations)) / num_calculations)
       elsif f_idx == 2
-        puts inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[1].to_f / num_calculations * (1 - temp_dispersion[1].to_f / num_calculations)) / num_calculations)
+        inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[1].to_f / num_calculations * (1 - temp_dispersion[1].to_f / num_calculations)) / num_calculations)
       else
-        puts inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[2].to_f / num_calculations * (1 - temp_dispersion[2].to_f / num_calculations)) / num_calculations)
+        inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[2].to_f / num_calculations * (1 - temp_dispersion[2].to_f / num_calculations)) / num_calculations)
       end
 
       result_inaccuracy << inc_func
