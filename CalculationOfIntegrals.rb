@@ -3,10 +3,9 @@ include IntegralFunction # модуль підінтегральних функ�
 include DirectIntegration # модуль проінтегрованих функцій
 include RectangleModule # модуль методу прямокутників
 include MonteKarloSimple # модуль простого методу Монте-Карло
+include MonteKarloHard # модуль геометричного методу Монте-Карло
 
-# x_down = y_down = z_down = 0
-# x_up = y_up = z_up = 1
-a = u = k = rec_step =  0
+a = u = k = rec_step = 0
 down = 0
 up = 1
 
@@ -45,23 +44,24 @@ while 1
   end
 end
 
-# безпосереднє інтегрування кожної підінтегральної функції
-first_direct_integration = func_one_integration(a, up) - func_one_integration(a, down)
-two_direct_integration = func_two_integration(u, up) - func_two_integration(u, down)
-three_direct_integration = func_three_integration(k, up) - func_three_integration(k, down)
-
 # розрахунок результату безпосереднього інтегрування
-puts("Результат безпосереднього інтегрування: #{dir_integration_res = first_direct_integration * two_direct_integration * three_direct_integration}")
+puts("Результат безпосереднього інтегрування: #{dir_integration_res = calculate_integration(up, down, a, u, k)}")
 
 # розрахунок результату методом прямокутників
 puts("\nРезультат методу прямокутників: #{rectangle_method_res = rectangle_method(down, up, a, u, k, rec_step)}
 Помилка методу прямокутників: #{(dir_integration_res - rectangle_method_res).abs}
-Похибка методу прямокутніків (формула Рунге): #{runge(down, up, a, u, k, rec_step)}")
+Похибка методу прямокутніків (формула Рунге): #{runge_inaccuracy(down, up, a, u, k, rec_step)}")
 
 # розрахунок результату простим методом Монте-Карло
 puts("\nРезультат простого методу Монте-Карло: #{monte_karlo_simple_method_res = monte_karlo_simple_method(up, down, a, u, k, ((up - down) / rec_step).to_i)}
 Помилка простого методу Монте-Карло: #{(dir_integration_res - monte_karlo_simple_method_res).abs}
-Похибка простого методу Монте-Карло: #{(calculate_inaccuracy(up, down, a, u, k, ((up - down) / rec_step).to_i) / 3).abs}")
+Похибка простого методу Монте-Карло: #{inaccuracy(up, down, a, u, k, ((up - down) / rec_step).to_i)}")
 
+# розрахунок результату геометричним методом Монте-Карло
+puts("\nРезультат геометричного методу Монте-Карло: #{monte_karlo_hard_method_res = monte_karlo_hard_method(up, down, a, u, k, ((up - down) / rec_step).to_i, rec_step)}
+Помилка геометричного методу Монте-Карло: #{(dir_integration_res - monte_karlo_hard_method_res).abs}
+Похибка геометричного методу Монте-Карло: #{inaccuracy_hard_monte_karlo(up, down, a, u, k, ((up - down) / rec_step).to_i, rec_step)}")
 
-# ((rectangle_method(down, up, a, u, k, rec_step) - rectangle_method(down, up, a, u, k, 2 * rec_step)) / 3).abs
+# min_max_func(down, up, a, u, k, rec_step)
+# test(up, down, a, u, k, ((up - down) / rec_step).to_i)
+#monte_karlo_hard_method_res = monte_karlo_hard_method(up, down, a, u, k, ((up - down) / rec_step), rec_step)
