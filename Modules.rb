@@ -46,9 +46,9 @@ module RectangleModule
   def rectangle_integration(down, up, a, u, k, rec_step)
     sum_func_1 = sum_func_2 = sum_func_3 = 0
     (down..up).step(rec_step) { |temp|
-      sum_func_1 += func_one(a, temp)
-      sum_func_2 += func_two(u, temp)
-      sum_func_3 += func_three(k, temp)
+      sum_func_1 += func_one(a, temp + rec_step / 2)
+      sum_func_2 += func_two(u, temp + rec_step / 2)
+      sum_func_3 += func_three(k, temp + rec_step / 2)
     }
 
     [sum_func_1, sum_func_2, sum_func_3]
@@ -113,9 +113,9 @@ module MonteKarloSimple
     rand_mas = temp.dig(:rand)
     sum_temp = temp.dig(:func).sum
 
-    inaccuracy_sum_1 = (sum_temp / 3).abs / num_calculations
+    inaccuracy_sum_1 = (sum_temp / 3).abs / num_calculations # визначення середнього значення функції в області інтегрування
 
-    (0..num_calculations).each {
+    (0..num_calculations).each {# сума кожної з функції де f(x_i)^2
       g1 = rand_mas.pop
       x = down + (up - down) * g1
       sum_func_1 += func_one(a, x) ** 2
@@ -125,9 +125,9 @@ module MonteKarloSimple
 
     inaccuracy_sum_2 = ([sum_func_1, sum_func_2, sum_func_3].sum / 3).abs / num_calculations
 
-    dispersion = inaccuracy_sum_2 - inaccuracy_sum_1 ** 2
+    dispersion = inaccuracy_sum_2 - inaccuracy_sum_1 ** 2 # розрахунок значення дисперсії
 
-    (up - down) * Math.sqrt(dispersion / num_calculations)
+    (up - down) * Math.sqrt(dispersion / num_calculations) # середньоквадратичне відхилення
   end
 end
 
@@ -180,36 +180,38 @@ module MonteKarloHard
       n_one = 0
 
       (0..num_calculations).each {
-        rand_var = rand(down.to_f..up.to_f)
-        x = down + (up - down) * rand_var
+        rand_var_1 = rand(down.to_f..up.to_f) # знаходження першого випадкого значення (1 пункт)
+        rand_var_2 = rand(down.to_f..up.to_f) # знаходження другого випадкого значення (1 пункт)
 
-        y_1 = min + (max - min) * rand_var
+        x_i = down + (up - down) * rand_var_1 # 2 пункт
+        y_i = min + (max - min) * rand_var_2 # 2 пункт
 
         if f_idx == 1
-          if func_one(a, x) > y_1
-            n_one += 1
+          if func_one(a, x_i) > y_i # перевірка на знаходження точки під кривою для першої функції (3 пункт)
+            n_one += 1 # 4 пункт
           end
         elsif f_idx == 2
-          if func_two(u, x) > y_1
-            n_one += 1
+          if func_two(u, x_i) > y_i # перевірка на знаходження точки під кривою для другої функції (3 пункт)
+            n_one += 1 # 4 пункт
           end
         else
-          if func_three(k, x) > y_1
-            n_one += 1
+          if func_three(k, x_i) > y_i # перевірка на знаходження точки під кривою для третьої функції (3 пункт)
+            n_one += 1 # 4 пункт
           end
         end
       }
 
-      result << (up - down) * ((max - min) * n_one / num_calculations.to_f + min)
+      result << (up - down) * ((max - min) * n_one / num_calculations.to_f + min) # формула 1.13
       f_idx += 1
     end
 
-    result.inject(:*)
+    result.inject(:*) # остаточний результат
   end
 
   def eps_method(up, down, a, u, k)
     f_idx = 1
     mas_eps = []
+    result = 0
 
     (1..3).each do
       x = rand(down.to_f..up.to_f)
@@ -263,8 +265,8 @@ module MonteKarloHard
     f_idx = 1
     result_inaccuracy = []
 
-    temp_min_max = min_max_func(up, down, a, u, k, rec_step)
-    temp_dispersion = temp_method_eps(up, down, a, u, k, num_calculations)
+    temp_min_max = min_max_func(up, down, a, u, k, rec_step) # змінна для використання результату методу min_max_func
+    temp_dispersion = temp_method_eps(up, down, a, u, k, num_calculations) # змінна для використання результату методу temp_method_eps
 
     (1..3).each do |var|
       min_max_func = temp_min_max.dig(var)
@@ -272,11 +274,14 @@ module MonteKarloHard
       max = min_max_func[1]
 
       if f_idx == 1
-        inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[0].to_f / num_calculations * (1 - temp_dispersion[0].to_f / num_calculations)) / num_calculations)
+        # розрахунок середньоквадратичного відхилення для першої функції
+        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[0].to_f / num_calculations) * (1 - (temp_dispersion[0].to_f / num_calculations))) / num_calculations)
       elsif f_idx == 2
-        inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[1].to_f / num_calculations * (1 - temp_dispersion[1].to_f / num_calculations)) / num_calculations)
+        # розрахунок середньоквадратичного відхилення для дургої функції
+        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[1].to_f / num_calculations) * (1 - (temp_dispersion[1].to_f / num_calculations))) / num_calculations)
       else
-        inc_func = (up - down) * (max - min) * Math.sqrt((temp_dispersion[2].to_f / num_calculations * (1 - temp_dispersion[2].to_f / num_calculations)) / num_calculations)
+        # розрахунок середньоквадратичного відхилення для третьої функції
+        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[2].to_f / num_calculations) * (1 - (temp_dispersion[2].to_f / num_calculations))) / num_calculations)
       end
 
       result_inaccuracy << inc_func
