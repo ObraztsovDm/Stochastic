@@ -115,7 +115,7 @@ module MonteKarloSimple
 
     inaccuracy_sum_1 = (sum_temp / 3).abs / num_calculations # визначення середнього значення функції в області інтегрування
 
-    (0..num_calculations).each {# сума кожної з функції де f(x_i)^2
+    (0..num_calculations).each { # сума кожної з функції де f(x_i)^2
       g1 = rand_mas.pop
       x = down + (up - down) * g1
       sum_func_1 += func_one(a, x) ** 2
@@ -275,13 +275,13 @@ module MonteKarloHard
 
       if f_idx == 1
         # розрахунок середньоквадратичного відхилення для першої функції
-        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[0].to_f / num_calculations) * (1 - (temp_dispersion[0].to_f / num_calculations))) / num_calculations)
+        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[0].to_f / num_calculations.to_f) * (1 - (temp_dispersion[0].to_f / num_calculations.to_f)).abs) / num_calculations.to_f)
       elsif f_idx == 2
         # розрахунок середньоквадратичного відхилення для дургої функції
-        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[1].to_f / num_calculations) * (1 - (temp_dispersion[1].to_f / num_calculations))) / num_calculations)
+        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[1].to_f / num_calculations.to_f) * (1 - (temp_dispersion[1].to_f / num_calculations.to_f)).abs) / num_calculations.to_f)
       else
         # розрахунок середньоквадратичного відхилення для третьої функції
-        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[2].to_f / num_calculations) * (1 - (temp_dispersion[2].to_f / num_calculations))) / num_calculations)
+        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[2].to_f / num_calculations.to_f) * (1 - (temp_dispersion[2].to_f / num_calculations.to_f)).abs) / num_calculations.to_f)
       end
 
       result_inaccuracy << inc_func

@@ -55,7 +55,7 @@ puts("Результат безпосереднього інтегрування
 # розрахунок результату методом прямокутників
 puts("\nРезультат методу прямокутників: #{rectangle_method_res = rectangle_method(down, up, a, u, k, rec_step)}
 Помилка методу прямокутників: #{(dir_integration_res - rectangle_method_res).abs}
-Похибка методу прямокутніків (формула Рунге): #{runge_inaccuracy(down, up, a, u, k, rec_step)}
+Похибка методу прямокутників (формула Рунге): #{runge_inaccuracy(down, up, a, u, k, rec_step)}
 Час виконання методу прямокутників: #{Benchmark.measure {rectangle_method(down, up, a, u, k, rec_step)}.real} c.")
 
 # розрахунок результату простим методом Монте-Карло
@@ -65,11 +65,15 @@ puts("\nРезультат найпростішого методу Монте-К
 Час виконання найпростішого методу Монте-Карло: #{Benchmark.measure {monte_karlo_simple_method(up, down, a, u, k, ((up - down) / rec_step).to_i)}.real} c.")
 
 # розрахунок результату геометричним методом Монте-Карло
+# puts("\nРезультат геометричного методу Монте-Карло: #{monte_karlo_hard_method_res = temp_method_eps(up, down, a, u, k, ((up - down) / rec_step).to_i)}")
+
+
 puts("\nРезультат геометричного методу Монте-Карло: #{monte_karlo_hard_method_res = monte_karlo_hard_method(up, down, a, u, k, ((up - down) / rec_step).to_i, rec_step)}
 Помилка геометричного методу Монте-Карло: #{(dir_integration_res - monte_karlo_hard_method_res).abs}
 Похибка геометричного методу Монте-Карло: #{inaccuracy_hard_monte_karlo(up, down, a, u, k, ((up - down) / rec_step).to_i, rec_step)}
 Час виконання геометричного методу Монте-Карло: #{Benchmark.measure {monte_karlo_hard_method(up, down, a, u, k, ((up - down) / rec_step).to_i, rec_step)}.real} c.")
 
+
 # min_max_func(down, up, a, u, k, rec_step)
 # test(up, down, a, u, k, ((up - down) / rec_step).to_i)
-# monte_karlo_hard_method_res = monte_karlo_hard_method(up, down, a, u, k, ((up - down) / rec_step), rec_step)
+# monte_karlo_hard_method_res = monte_karlo_hard_method(up, down, a, u, k, ((up - down) / rec_step).to_i, rec_step)
