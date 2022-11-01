@@ -126,8 +126,10 @@ module MonteKarloSimple
     inaccuracy_sum_2 = ([sum_func_1, sum_func_2, sum_func_3].sum / 3).abs / num_calculations
 
     dispersion = inaccuracy_sum_2 - inaccuracy_sum_1 ** 2 # розрахунок значення дисперсії
-
-    (up - down) * Math.sqrt(dispersion / num_calculations) # середньоквадратичне відхилення
+    {
+      :inaccuracy => (up - down) * Math.sqrt(dispersion / num_calculations), # середньоквадратичне відхилення
+      :dispersion => dispersion # значення дисперсії для розрахунку трудомісткості
+    }
   end
 end
 
@@ -259,11 +261,14 @@ module MonteKarloHard
     }
 
     [sum_func_1, sum_func_2, sum_func_3]
+
   end
 
   def inaccuracy_hard_monte_karlo(up, down, a, u, k, num_calculations, rec_step)
+
     f_idx = 1
     result_inaccuracy = []
+    result_dispersion = []
 
     temp_min_max = min_max_func(up, down, a, u, k, rec_step) # змінна для використання результату методу min_max_func
     temp_dispersion = temp_method_eps(up, down, a, u, k, num_calculations) # змінна для використання результату методу temp_method_eps
@@ -275,19 +280,27 @@ module MonteKarloHard
 
       if f_idx == 1
         # розрахунок середньоквадратичного відхилення для першої функції
-        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[0].to_f / num_calculations.to_f) * (1 - (temp_dispersion[0].to_f / num_calculations.to_f)).abs) / num_calculations.to_f)
+        dispersion = (temp_dispersion[0].to_f / num_calculations.to_f) * (1 - (temp_dispersion[0].to_f / num_calculations.to_f))
+        inc_func = (up - down) * (max - min) * Math.sqrt((dispersion.abs) / num_calculations.to_f)
       elsif f_idx == 2
         # розрахунок середньоквадратичного відхилення для дургої функції
-        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[1].to_f / num_calculations.to_f) * (1 - (temp_dispersion[1].to_f / num_calculations.to_f)).abs) / num_calculations.to_f)
+        dispersion = (temp_dispersion[1].to_f / num_calculations.to_f) * (1 - (temp_dispersion[1].to_f / num_calculations.to_f))
+        inc_func = (up - down) * (max - min) * Math.sqrt((dispersion.abs) / num_calculations.to_f)
       else
         # розрахунок середньоквадратичного відхилення для третьої функції
-        inc_func = (up - down) * (max - min) * Math.sqrt(((temp_dispersion[2].to_f / num_calculations.to_f) * (1 - (temp_dispersion[2].to_f / num_calculations.to_f)).abs) / num_calculations.to_f)
+        dispersion = (temp_dispersion[2].to_f / num_calculations.to_f) * (1 - (temp_dispersion[2].to_f / num_calculations.to_f))
+        inc_func = (up - down) * (max - min) * Math.sqrt((dispersion.abs) / num_calculations.to_f)
       end
 
       result_inaccuracy << inc_func
+      result_dispersion << dispersion
+
       f_idx += 1
     end
 
-    result_inaccuracy.sum / 3.0
+    {
+      :result_inaccuracy => result_inaccuracy.sum / 3.0, # середньоквадратичне відхилення
+      :dispersion => result_dispersion.sum / 3.0 # значення дисперсії для розрахунку трудомісткості
+    }
   end
 end
