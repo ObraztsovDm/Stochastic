@@ -1,13 +1,15 @@
-puts "Введіть параметри моделі"
+require 'benchmark'
 =begin
+puts "Введіть параметри моделі"
+
 count_ns = 0
 thickness = 0.0
 pa = 0.0
 kr = 0.0
 mu = 0.0
 =end
-hade = 5.0
-thickness = 10.0
+hade = 45.0
+thickness = 2.0
 count_ns = 10000
 
 mu = 1.0
@@ -113,11 +115,10 @@ def calculation(count_ns, thickness, pa, kr, mu, hade)
   f_var = 0.0
   b_var = 0.0
   ab_var = 0.0
-  x_0 = 0.0
-  cos_0 = Math.cos(Math::PI * hade / 180)
+
   (1..count_ns).each do
-    x = x_0
-    cs = cos_0
+    x = 0.0
+    cs = Math.cos(Math::PI * hade / 180)
     while 1
       l = -Math.log(rand) / mu
       x1 = x + l * cs
@@ -138,8 +139,8 @@ def calculation(count_ns, thickness, pa, kr, mu, hade)
       end
 
       com = rand(0.0..1.0) ** (1 / (kr + 1))
-      s_fi = Math.sin(2 * Math::PI * rand(0.0..1.0))
-      cos_1 = cs * com - Math.sqrt((1 - cs * cs) * (1 - com * com)) * s_fi # за формулою cos^2 + sin^2 = 1
+      fi = 2 * Math::PI * rand(0.0..1.0)
+      cos_1 = cs * com - Math.sqrt((1 - cs * cs) * (1 - com * com)) * Math.sin(fi) # за формулою cos^2 + sin^2 = 1
 
       x = x1
       cs = cos_1
@@ -164,8 +165,14 @@ def calculation(count_ns, thickness, pa, kr, mu, hade)
   }
 end
 
+puts "Результати моделювання"
 results = calculation(count_ns, thickness, pa, kr, mu, hade)
-
+q_calc = (results.dig(:Q_F) + results.dig(:Q_B) + results.dig(:Q_Ab) / 3) * Benchmark.measure {calculation(count_ns, thickness, pa, kr, mu, hade)}.real / count_ns
+puts("Передавальне відношення: #{results.dig(:Q_F)} :::: Похибка: #{results.dig(:F_Ns)}")
+puts("Коефіцієнт відбиття:     #{results.dig(:Q_B)} :::: Похибка: #{results.dig(:B_Ns)}")
+puts("Коефіцієнт поглинання:   #{results.dig(:Q_Ab)} :::: Похибка: #{results.dig(:Ab_Ns)}")
+puts("Трудомісткість:          #{q_calc}")
+=begin
 puts("Test(Q_f): #{results.dig(:Q_F)}")
 puts("Test(Q_b): #{results.dig(:Q_B)}")
 puts("Test(Q_ab): #{results.dig(:Q_Ab)}")
@@ -173,3 +180,4 @@ puts("Test(Q_ab): #{results.dig(:Q_Ab)}")
 puts("Test(F_Ns): #{results.dig(:F_Ns)}")
 puts("Test(B_Ns): #{results.dig(:B_Ns)}")
 puts("Test(Ab_Ns): #{results.dig(:Ab_Ns)}")
+=end
